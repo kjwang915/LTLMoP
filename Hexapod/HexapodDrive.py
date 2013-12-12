@@ -4,7 +4,6 @@ import math
 class driveHandler:
 
     threshold = 30      #the min angle difference for changing  the gait
-    possibleIntervals = 30
 
     def __init__(self, proj, shared_data):
         # Get reference to locomotion command handler, since
