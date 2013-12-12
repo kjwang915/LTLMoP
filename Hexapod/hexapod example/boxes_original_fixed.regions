@@ -1,0 +1,211 @@
+# This is a region definition file for the LTLMoP toolkit.
+# Format details are described at the beginning of each section below.
+# Note that all values are separated by *tabs*.
+
+Background: # Relative path of background image file
+None
+
+CalibrationPoints: # Vertices to use for map calibration: (vertex_region_name, vertex_index)
+
+Obstacles: # Names of regions to treat as obstacles
+boxes
+
+Regions: # Stored as JSON string
+[
+    {
+        "name": "red", 
+        "color": [
+            255, 
+            0, 
+            0
+        ], 
+        "holeList": [], 
+        "height": 0, 
+        "points": [
+            [
+                0.0, 
+                111.71797418073487
+            ], 
+            [
+                232.37338629592847, 
+                0.0
+            ], 
+            [
+                306.85203574975174, 
+                184.21052631578948
+            ], 
+            [
+                98.80834160873883, 
+                300.89374379344594
+            ]
+        ], 
+        "position": [
+            267.3286991062562, 
+            129.79145978152923
+        ], 
+        "type": "poly", 
+        "size": [
+            306.85203574975174, 
+            300.89374379344594
+        ]
+    }, 
+    {
+        "name": "green", 
+        "color": [
+            0, 
+            255, 
+            64
+        ], 
+        "holeList": [], 
+        "height": 0, 
+        "points": [
+            [
+                14.39920556107245, 
+                0.0
+            ], 
+            [
+                238.33167825223438, 
+                13.902681231380313
+            ], 
+            [
+                238.33167825223438, 
+                292.94935451837136
+            ], 
+            [
+                0.0, 
+                292.94935451837136
+            ]
+        ], 
+        "position": [
+            742.5024826216484, 
+            394.43892750744783
+        ], 
+        "type": "poly", 
+        "size": [
+            238.33167825223438, 
+            292.94935451837136
+        ]
+    }, 
+    {
+        "name": "boxes", 
+        "color": [
+            142, 
+            7, 
+            242
+        ], 
+        "holeList": [], 
+        "height": 0, 
+        "points": [
+            [
+                59.582919563058624, 
+                0.0
+            ], 
+            [
+                275.57100297914593, 
+                164.34955312810325
+            ], 
+            [
+                232.37338629592847, 
+                215.49155908639534
+            ], 
+            [
+                0.0, 
+                45.18371400198612
+            ]
+        ], 
+        "position": [
+            218.669314796425, 
+            695.8291956305858
+        ], 
+        "type": "poly", 
+        "size": [
+            275.57100297914593, 
+            215.49155908639534
+        ]
+    }, 
+    {
+        "name": "black", 
+        "color": [
+            192, 
+            192, 
+            192
+        ], 
+        "holeList": [], 
+        "height": 0, 
+        "points": [
+            [
+                0.0, 
+                132.5719960278053
+            ], 
+            [
+                70.00993048659387, 
+                0.0
+            ], 
+            [
+                301.88679245283015, 
+                170.30784508440922
+            ], 
+            [
+                199.6027805362463, 
+                302.8798411122144
+            ]
+        ], 
+        "position": [
+            149.15590863952332, 
+            741.0129096325719
+        ], 
+        "type": "poly", 
+        "size": [
+            301.88679245283015, 
+            302.8798411122144
+        ]
+    }, 
+    {
+        "name": "boundary", 
+        "color": [
+            121, 
+            214, 
+            75
+        ], 
+        "holeList": [], 
+        "height": 0, 
+        "points": [
+            [
+                8.937437934458785, 
+                7.944389275074457
+            ], 
+            [
+                1000.0, 
+                0.0
+            ], 
+            [
+                947.8649453823236, 
+                315.2929493545183
+            ], 
+            [
+                954.3197616683217, 
+                595.3326713008937
+            ], 
+            [
+                880.8341608738828, 
+                943.8927507447863
+            ], 
+            [
+                0.0, 
+                968.222442899702
+            ]
+        ], 
+        "position": [
+            100.0, 
+            100.0
+        ], 
+        "type": "poly", 
+        "size": [
+            1000.0, 
+            968.222442899702
+        ]
+    }
+]
+
+Transitions: # Region 1 Name, Region 2 Name, Bidirectional transition faces (face1_x1, face1_y1, face1_x2, face1_y2, face2_x1, ...)
+
