@@ -9,9 +9,6 @@ Kevin J. Wang
 //include this library to allow for extra serial communication ports on the Arduino
 #include <SoftwareSerial.h>
 
-#define LEFT false
-#define RIGHT true
-
 /*
 The values below correspond to different servo position values so that these different positions are
 able to be called directly.
@@ -19,21 +16,32 @@ These values were found using the sequencer that can be downloaded from the Lynx
 */
 //neutral position
 unsigned int neutral[] = 
-  {-1, 1250, 1462, 1420, -1, 1490, 1860, 1540, -1, 1900, 1490, 1750, -1, 2000, 1610, 1520, 1200, 1503, 1755, 1460, 1526, 1020, -1, 980, -1, 1580, 1100, 1460, -1, 960, 1600, 1450};
+  {-1, 1250, 1462, 1420, -1, 1490, 1860, 1540, 
+  -1, 1900, 1490, 1750, -1, 2000, 1610, 1520, 
+  1200, 1503, 1755, 1460, 1526, 1020, -1, 980,
+  -1, 1580, 1100, 1460, -1, 960, 1600, 1450};
 
 //low position
 int low[] = 
-  {-1, 1250, 1462, 1420, -1, 833, 1019, 833, -1, 1093, 1490, 1290, -1, 1154, 895, 1520, 1200, 1503, 1755, 1460, 2265, 1969, -1, 1907, -1, 2340, 1480, 1460, -1, 1824, 2377, 1450};
+  {-1, 1250, 1462, 1420, -1, 833, 1019, 833, 
+  -1, 1093, 1490, 1290, -1, 1154, 895, 1520, 
+  1200, 1503, 1755, 1460, 2265, 1969, -1, 1907, 
+  -1, 2340, 1480, 1460, -1, 1824, 2377, 1450};
 
 //high position
 int high[] = 
-  {-1, 1250, 1462, 1420, -1, 1994, 2412, 1985, -1, 2396, 1490, 1290, -1, 2500, 2068, 1520, 1200, 1503, 1755, 1460, 948, 500, -1, 500, -1, 997, 1480, 1460, -1, 500, 1154, 1450};
+  {-1, 1250, 1462, 1420, -1, 1994, 2412, 1985, 
+  -1, 2396, 1490, 1290, -1, 2500, 2068, 1520, 
+  1200, 1503, 1755, 1460, 948, 500, -1, 500, 
+  -1, 997, 1480, 1460, -1, 500, 1154, 1450};
 
 /*
 The matrices below contain the initial and final positions of the leg servo angles.
 These values are found from an excel document attached with basic algebra calculations that will provide
 you with three values for each leg: phi, alpha, and beta which correspond to the hip, femur, and tibia of
 the hexapod's legs, respectively.
+These values are in radians. The respective radian values for the servo angle positions
+were found by mapping the maximum and minimum servo position values to 0 and 2*pi in radians.
 */
 
 float rightStart[9] = {
@@ -67,12 +75,12 @@ SoftwareSerial Servos(10, 11); // RX, TX
 
 //The matrices below are the initial values of the servo positions of the legs
 //These values will be added to the offset values, allowing for movement of the legs
-  const int leftNuetral_val[9] = {
+  const int leftneutral_val[9] = {
     1883, 1860, 1574,         //left front leg
     1512, 1900, 1540,         //left middle leg
     957, 2000, 1747 };        //left back leg  
   
-  const int rightNuetral_val[9] = {
+  const int rightneutral_val[9] = {
     1006, 1040, 1438,         //right front leg
     1460, 1056, 1488,         //right middle leg
     1846, 1080, 1590 };       //right back leg
@@ -107,7 +115,7 @@ void loop() {
           leftStart[i] = -rightStart[i];
           leftEnd[i] = -rightEnd[i];
         }
-        forwardOnly();            //walk forwards
+        forward();            //walk forwards
         Serial.write('q');        //write back through serial when action is complete
         Serial.flush();           //waits for transmission of outgoing serial data to complete
         break;
@@ -127,7 +135,7 @@ void loop() {
           leftStart[i*3] = rightEnd[i*3];
           leftEnd[i*3] = rightStart[i*3];
         }
-        forward();
+        turn();
         Serial.write('q');
         Serial.flush();
 
@@ -139,7 +147,7 @@ void loop() {
           leftStart[i*3] = -rightEnd[i*3];
           leftEnd[i*3] = -rightStart[i*3];
         }
-        forward();
+        turn();
         Serial.write('q');
         Serial.flush();
 
@@ -147,14 +155,14 @@ void loop() {
       
       case 'e':  //stand up
         for (int i = 0; i <= 31; i++){
-          moveServos(i, high[i],0.5);
+          sendPosition(i, high[i],0.5);
         }
         Serial.write('q');
         Serial.flush();
         break;
       case 'f':  //sit down
         for (int i = 0; i <= 31; i++){
-          moveServos(i, low[i],0.5);
+          sendPosition(i, low[i],0.5);
         }
         Serial.write('q');
         Serial.flush();
@@ -169,10 +177,10 @@ void loop() {
 }
 
 /*
-function to move forwards
+function to turn; gait is slightly different from forwards gait
 gait moves two legs at a time, thus there are 3 PODs
 */
-void forward() {
+void turn() {
   
   //set tail and head to neutral position so they do not affect movement
   moveServos(3,1420,1);
@@ -271,8 +279,9 @@ void forward() {
 
 /*
 this gait works better than previous gait when only walking forwards
+gait moves two legs at a time, thus there are 3 PODs
 */
-void forwardOnly() {
+void forward() {
   //POD 1 go to beginning
   servoSerial(0, rightEnd[0], 50, true);
   servoSerial(1, rightEnd[1] + PI/10, 20, true);
@@ -361,12 +370,18 @@ void forwardOnly() {
 adds neutral value offsets and then sends the servo positions through serial to the SSC-32
 */
 void servoSerial(int ser, float pos, int time, boolean right) {
+  
+  //this is used to change from radians to servo position angles
+  //found this relationship by mapping the max and min values of the servo to radians on excel
+  pos = pos * 180/PI;
+  pos = 11.111*pos;
+  
   if (right) {
-    pos = pos+rightNuetral_val[ser];
+    pos = pos+rightneutral_val[ser];
     ser = rightTable[ser];
   }
   else {
-    pos = pos+leftNuetral_val[ser];
+    pos = pos+leftneutral_val[ser];
     ser = leftTable[ser];
   }
   Servos.print('#');
@@ -380,7 +395,7 @@ void servoSerial(int ser, float pos, int time, boolean right) {
 /*
 simple function that allows for input of each specific servo position directly (no offset values)
 */
-void moveServos(int servo, int pos, int time){
+void sendPosition(int servo, int pos, int time){
   Servos.print("#");
   Servos.print(servo);
   Servos.print(" P");

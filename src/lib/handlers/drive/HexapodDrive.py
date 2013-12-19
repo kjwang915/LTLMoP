@@ -1,11 +1,13 @@
 import math
 
 
-class driveHandler:
+class hexapodDriveHandler:
 
-    threshold = 30      #the min angle difference for changing  the gait
+    threshold = 30      #how far in degrees the robot must have deviated from its
+                        #path before it changes gaits
 
     def __init__(self, proj, shared_data):
+        
         # Get reference to locomotion command handler, since
         # we'll be passing commands right on to it
         self.loco = proj.h_instance['locomotionCommand']
@@ -13,31 +15,28 @@ class driveHandler:
         try:
             self.hexapodSer = shared_data["hexapodSer"]
         except:
-            print "(DRIVE) ERROR: No connection to  hexapod"
-            exit(-1)
+            logging.exception("no connection to hexapod")
+            sys.exit()
 
     def setVelocity(self, x, y, theta=0):
-        # TODO: Given desired translational [X,Y] velocity specified in the
-        # *GLOBAL REFERENCE FRAME* from the motion controller, and current robot
-        # orientation theta (measured counter-clockwise from the positive X-axis),
-        # construct a drive command for our robot that will get us as close as
-        # possible and send it on to the locomotion command handler
+        """
+        if destination is reached, stop moving
+        else find which way to turn or move forwards
+        """
 
-        #if destination is reached, stop moving
-        #else find which way to turn or move forwards
         if x == 0 and y == 0:
             self.loco.stop()
         else:
             direction = self.getDirection(x, y, theta)
             if self.thresholdIsMet(direction,theta) and direction < 180:
-                self.loco.turnClockwise(direction)
+                self.loco.turnClockwise()
             elif self.thresholdIsMet(direction,theta) and direction >= 180:
-                self.loco.turnCounterclockwise(direction)
+                self.loco.turnCounterclockwise()
             else:
-                self.loco.move(5)
+                self.loco.move()
                                             
 
-    def getDirection(self, x, y, theta):
+    def getDirection(self, Vx, Vy, theta):
         """
         Take in a global x and y velocity vector, as well as the direction the
         robot is facing, and turn it into a relative heading direction.
@@ -52,7 +51,7 @@ class driveHandler:
         while (theta < 0):
             theta += 360
             
-        angleVelGlob = math.degrees(math.atan2(y, x)) * -1
+        angleVelGlob = math.degrees(math.atan2(Vy, Vx)) * -1
         #assure dirVelGloabal is pos
         while (angleVelGlob < 0):
             angleVelGlob += 360

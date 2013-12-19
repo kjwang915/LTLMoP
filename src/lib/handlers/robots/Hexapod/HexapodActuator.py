@@ -1,26 +1,30 @@
 import time
 
-class actuatorHandler:
+class hexapodActuatorHandler:
     def __init__(self, proj, shared_data):
-        # Connect to hexapod
+    """
+    Connect to hexapod
+    """
         try:
             self.hexapodSer = shared_data["hexapodSer"]
         except:
-            print "(ACTUATOR) ERROR: No connection to  hexapod"
-            exit(-1)
+            logging.exception("no connection to hexapod")
+            sys.exit()
 
     def _sendCommand(self, cmd):
-       # Send locomotion command ``cmd`` to the robot
+       """
+       Send locomotion command ``cmd`` to the robot
+       """
 
        #print action being sent
        if cmd == 'e':
-           print 'sending standUp'
+           logging.debug("sending standUp")
        elif cmd == 'f':
-           print 'sending sitDown'
+           logging.debug("sending sitDown")
        elif cmd == 'g':
-           print 'sending tailUp'
+           logging.debug("sending tailUp")
 
-       #print 'sending, ',cmd     #used for debugging purposes
+
        
        #send command to Arduino on hexapod
        self.hexapodSer.write(cmd)
@@ -31,40 +35,40 @@ class actuatorHandler:
        #if Arduino does not respond, print "received invalid"
        #waits until Arduino responds
        while x != 'q':
-           print "received invalid ack: ", repr(x)
+           logging.debug("received invalid")
            self.hexapodSer.write(cmd)
            x = self.hexapodSer.read()
-       self.hexapodSer.flush()
+       
 
-    #stand up action
-    #sends character 'e' for hexapod to stand up
+
     def standUp(self, actuatorVal, initial=False):
         """
-        tells robot to go up
+        stand up action
         """
         if initial:
             return
         if actuatorVal:
-            self._sendCommand('e')
+            #sends character 'e' for hexapod to stand up
+            init.sendCommand('e')
 
-    #sit down action
-    #sends character 'f' for hexapod to sit down
+
     def sitDown(self, actuatorVal, initial=False):
         """
-        tells robot to go down
+        sit down action
         """
         if initial:
             return
         if actuatorVal:
-            self._sendCommand('f')
+            #sends character 'f' for hexapod to sit down
+            init.sendCommand('f')
 
-    #tail up action
-    #sends character 'g' for hexapod to put tail up
+
     def tailUp(self, actuatorVal, initial=False):
         """
-        tells put tail up
+        tail up action
         """
         if initial:
             return
         if actuatorVal:
-            self._sendCommand('g')
+            #sends character 'g' for hexapod to put tail up
+            init.sendCommand('g')
